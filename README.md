@@ -16,24 +16,34 @@ This Docker Compose configuration file (`docker-compose.yml`) sets up a developm
 `CREATE (user5:User {name: 'maria', favorite_bands: ['Sonic Youth']})`
 
 `CREATE (user1)-[:FRIEND]->(user2)`
+
 `CREATE (user2)-[:FRIEND]->(user1)`
+
 `CREATE (user1)-[:FRIEND]->(user3)`
+
 `CREATE (user3)-[:FRIEND]->(user1)`
+
 `CREATE (user2)-[:FRIEND]->(user3)`
+
 `CREATE (user3)-[:FRIEND]->(user2)`
+
 `CREATE (user5)-[:FRIEND]->(user3)`
+
 `CREATE (user3)-[:FRIEND]->(user5)`
 
 #### Find friends of User1
 `MATCH (user1:User {name: 'koukos'})-[:FRIEND]-(friend)`
+
 `RETURN user1, friend`
 
 #### Show all nodes and relationships in the graph
 `MATCH (n)`
+
 `RETURN n;`
 
 #### Delete all nodes and relationships in the graph
 `MATCH (n)`
+
 `DETACH DELETE n;`
 
 ### MongoDB
