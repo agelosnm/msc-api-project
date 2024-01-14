@@ -11,9 +11,9 @@ This Docker Compose configuration file (`docker-compose.yml`) sets up a developm
 
 ## Volumes
 
-- **mysql-data:** MySQL data volume
-- **mongo-data:** MongoDB data volume
-- **neo4j-data:** Neo4j data volume
+- **mysql_data:** MySQL data volume
+- **mongo_data:** MongoDB data volume
+- **neo4j_data:** Neo4j data volume
 
 ## Usage
 
