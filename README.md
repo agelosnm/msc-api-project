@@ -8,18 +8,21 @@ This Docker Compose configuration file (`docker-compose.yml`) sets up a developm
 
 ### Neo4j
 
-#### Create nodes for users
+#### Create nodes for users & friendship relationships
 CREATE (user1:User {name: 'koukos', favorite_bands: ['Bring Me The Horizon', 'Radiohead']})
 CREATE (user2:User {name: 'matsapliokos', favorite_bands: ['Radiohead', 'Viagra Boys', 'Interpol', 'UNKLE']})
 CREATE (user3:User {name: 'korompos', favorite_bands: ['Bring Me The Horizon', 'Viagra Boys', 'Metallica']})
 CREATE (user4:User {name: 'gabriella', favorite_bands: ['Bauhaus', 'Depeche Mode']})
 CREATE (user5:User {name: 'maria', favorite_bands: ['Sonic Youth']})
 
-#### Create friendship relationships
 CREATE (user1)-[:FRIEND]->(user2)
+CREATE (user2)-[:FRIEND]->(user1)
 CREATE (user1)-[:FRIEND]->(user3)
+CREATE (user3)-[:FRIEND]->(user1)
 CREATE (user2)-[:FRIEND]->(user3)
+CREATE (user3)-[:FRIEND]->(user2)
 CREATE (user5)-[:FRIEND]->(user3)
+CREATE (user3)-[:FRIEND]->(user5)
 
 #### Find friends of User1
 MATCH (user1:User {name: 'koukos'})-[:FRIEND]-(friend)
