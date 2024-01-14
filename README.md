@@ -64,7 +64,7 @@ DETACH DELETE n;
 `docker exec -it kafka kafka-topics --list --bootstrap-server localhost:9092`
 
 #### List topic data
-`docker exec -it kafka kafka-console-consumer --topic bands-topic -bootstrap-server localhost:9092 --from-beginning`
+`docker exec -it kafka kafka-console-consumer --topic users-topic -bootstrap-server localhost:9092 --from-beginning`
 
 #### Delete topic
 `docker exec -it kafka kafka-topics --delete --topic bands-topic --bootstrap-server localhost:9092`

@@ -70,7 +70,7 @@ def mongo_producer():
     bands = list(mongo_collection.find(bands_query))
 
     for band in bands:
-        producer.send(kafka_users_topic, value=band)
+        producer.send(kafka_bands_topic, value=band)
 
     return jsonify({"message": "Bands published to Kafka successfully"})
 
