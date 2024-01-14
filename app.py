@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from kafka import KafkaProducer
 from flask import Flask, request, jsonify
 from pymongo import MongoClient
+from py2neo import Graph
 
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
@@ -17,10 +18,17 @@ mongo_collection_name = os.environ.get('MONGO_BANDS_COLLECTION')
 mongo_username = os.environ.get('MONGO_INITDB_ROOT_USERNAME')
 mongo_password = os.environ.get('MONGO_INITDB_ROOT_PASSWORD')
 
+neo4j_host = os.environ.get('NEO4J_HOST')
+neo4j_port = os.environ.get('NEO4J_PORT')
+neo4j_username = os.environ.get('NEO4J_AUTH').split('/')[0]
+neo4j_password = os.environ.get('NEO4J_AUTH').split('/')[1]
+neo4j_uri = "bolt://" + neo4j_host + ':' + neo4j_port
+
 kafka_host = os.environ.get('KAFKA_HOST')
 kafka_port = os.environ.get('KAFKA_PORT')
 kafka_bootstrap_servers = kafka_host + ':' + kafka_port
-kafka_topic = os.environ.get('KAFKA_BANDS_TOPIC')
+kafka_bands_topic = os.environ.get('KAFKA_BANDS_TOPIC')
+kafka_users_topic = os.environ.get('KAFKA_USERS_TOPIC')
 producer = KafkaProducer(bootstrap_servers=kafka_bootstrap_servers,
                          value_serializer=lambda v: str(v).encode('utf-8'))
 
@@ -35,6 +43,14 @@ except Exception as e:
     print(f"Error connecting to MongoDB: {e}")
 
 try:
+    # Neo4j connection
+    graph = Graph(neo4j_uri, auth=(neo4j_username, neo4j_password))
+    print("Connected to Neo4j successfully!")
+
+except Exception as e:
+    print(f"Error connecting to Neo4j: {e}")
+
+try:
     # Kafka connection
     producer = KafkaProducer(
         bootstrap_servers=kafka_bootstrap_servers,
@@ -46,7 +62,7 @@ except Exception as e:
     print(f"Error connecting to Kafka: {e}")
 
 @app.route('/publish/bands', methods=['POST'])
-def publish_bands_to_kafka():
+def mongo_producer():
     start_date = request.json['start_date']
     end_date = request.json['end_date']
 
@@ -54,10 +70,41 @@ def publish_bands_to_kafka():
     bands = list(mongo_collection.find(bands_query))
 
     for band in bands:
-        producer.send(kafka_topic, value=band)
+        producer.send(kafka_users_topic, value=band)
 
     return jsonify({"message": "Bands published to Kafka successfully"})
 
+@app.route('/publish/users', methods=['POST'])
+def graph_producer():
+    user_name = request.json['user_name']
+
+    try:
+    # Neo4j query to retrieve user and friends by name
+        query = f"""
+        MATCH (u:User)-[:FRIEND]->(friend)
+        WHERE u.name = '{user_name}'
+        RETURN u, friend
+        """
+        result = graph.run(query)
+
+        # Collect users to publish
+        users_to_publish = []
+        for record in result:
+            user = record['u']
+            friend = record['friend']
+            users_to_publish.append({
+                "user_name": user['name'],
+                "friend_name": friend['name']
+            })
+
+        # Publish users to Kafka topic
+        for user_to_publish in users_to_publish:
+            producer.send(kafka_users_topic, value=user_to_publish)
+
+        return jsonify({"message": "Users published to Kafka successfully"})
+
+    except Exception as e:
+        return jsonify({"error": f"Error processing request: {e}"})
 
 if __name__ == '__main__':
     app.run(debug=True)

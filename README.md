@@ -4,10 +4,70 @@ This Docker Compose configuration file (`docker-compose.yml`) sets up a developm
 
 ## Services
 
-- ### MySQL
-- ### Neo4j
-- ### MongoDB
-- ### Kafka (needs Zookeeper)
+### MySQL
+
+### Neo4j
+
+#### Create nodes for users
+CREATE (user1:User {name: 'koukos', favorite_bands: ['Bring Me The Horizon', 'Radiohead']})
+CREATE (user2:User {name: 'matsapliokos', favorite_bands: ['Radiohead', 'Viagra Boys', 'Interpol', 'UNKLE']})
+CREATE (user3:User {name: 'korompos', favorite_bands: ['Bring Me The Horizon', 'Viagra Boys', 'Metallica']})
+CREATE (user4:User {name: 'gabriella', favorite_bands: ['Bauhaus', 'Depeche Mode']})
+CREATE (user5:User {name: 'maria', favorite_bands: ['Sonic Youth']})
+
+#### Create friendship relationships
+CREATE (user1)-[:FRIEND]->(user2)
+CREATE (user1)-[:FRIEND]->(user3)
+CREATE (user2)-[:FRIEND]->(user3)
+CREATE (user5)-[:FRIEND]->(user3)
+
+#### Find friends of User1
+MATCH (user1:User {name: 'koukos'})-[:FRIEND]-(friend)
+RETURN user1, friend
+
+#### Show all nodes and relationships in the graph
+MATCH (n)
+RETURN n;
+
+#### Delete all nodes and relationships in the graph
+MATCH (n)
+DETACH DELETE n;
+
+### MongoDB
+
+#### Model
+
+```javascript
+{
+  "band_name": "She Past Away",
+  "formation_date": "2006",
+  "albums": [
+    {
+      "album_name": "Belirdi Gece",
+      "release_date": "2010-12-24"
+    },
+    {
+      "album_name": "Narin Yalnızlık",
+      "release_date": "2015-12-21"
+    },
+    {
+      "album_name": "Disko Anksiyete",
+      "release_date": "2019-05-09"
+    }
+  ]
+}
+```
+
+### Kafka (needs Zookeeper)
+
+#### List topics
+`docker exec -it kafka kafka-topics --list --bootstrap-server localhost:9092`
+
+#### List topic data
+`docker exec -it kafka kafka-console-consumer --topic bands-topic -bootstrap-server localhost:9092 --from-beginning`
+
+#### Delete topic
+`docker exec -it kafka kafka-topics --delete --topic bands-topic --bootstrap-server localhost:9092`
 
 ## Volumes
 
