@@ -5,6 +5,7 @@ from kafka import KafkaProducer
 from flask import Flask, request, jsonify
 from pymongo import MongoClient
 from py2neo import Graph
+import json
 
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
@@ -54,7 +55,7 @@ try:
     # Kafka connection
     producer = KafkaProducer(
         bootstrap_servers=kafka_bootstrap_servers,
-        value_serializer=lambda v: str(v).encode('utf-8')
+        value_serializer=lambda v: json.dumps(v).encode('utf-8')
     )
     print("Connected to Kafka successfully!")
 
@@ -67,11 +68,14 @@ def mongo_producer():
     end_date = request.json['end_date']
 
     bands_query = {"formation_date": {"$gte": start_date, "$lte": end_date}}
-    bands = list(mongo_collection.find(bands_query))
+    bands = list(mongo_collection.find(bands_query))    
 
     for band in bands:
-        producer.send(kafka_bands_topic, value=band)
+        band["_id"] = str(band["_id"]) # Remove ObjectID type
+    
+    producer.send(kafka_bands_topic, value=bands)
 
+    producer.close()
     return jsonify({"message": "Bands published to Kafka successfully"})
 
 @app.route('/publish/users', methods=['POST'])

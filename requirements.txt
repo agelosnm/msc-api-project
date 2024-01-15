@@ -3,4 +3,4 @@ flask==2.2.5
 gunicorn==20.1.0
 pymongo==4.4.0
 kafka-python==2.0.2
-pyneo==2021.2.4
+py2neo==2021.2.4
