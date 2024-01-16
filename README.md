@@ -10,28 +10,25 @@ The ETL mechanism operates as a REST service, facilitating monitoring through RE
 
 ## Implementation Details
 Programming Language: Python 3
+
 Source Databases: MongoDB, Neo4j
+
 Target Database: MySQL
+
 REST Service: Implemented using the Flask Framework
+
 Data Pipeline and Integration: Utilizes Apache Kafka
 
-
-
-
 ## Docker Compose Configuration
-
-  
+ 
 
 This Docker Compose configuration file (`docker-compose.yml`) sets up a development environment with containers for MySQL, Neo4j, MongoDB, Kafka, and Zookeeper. These containers can be used individually or together, depending on your application requirements.
-
-  
+ 
 
 ### Services
-
   
 
 #### MySQL
-
   
 
 ```sql
