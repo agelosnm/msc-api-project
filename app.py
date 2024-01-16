@@ -75,7 +75,6 @@ def mongo_producer():
     
     producer.send(kafka_bands_topic, value=bands)
 
-    producer.close()
     return jsonify({"message": "Bands published to Kafka successfully"})
 
 @app.route('/publish/users', methods=['POST'])
@@ -101,9 +100,7 @@ def graph_producer():
                 "friend_name": friend['name']
             })
 
-        # Publish users to Kafka topic
-        for user_to_publish in users_to_publish:
-            producer.send(kafka_users_topic, value=user_to_publish)
+        producer.send(kafka_users_topic, value=users_to_publish)
 
         return jsonify({"message": "Users published to Kafka successfully"})
 
