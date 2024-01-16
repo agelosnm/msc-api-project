@@ -115,29 +115,29 @@ DETACH DELETE n;
 
 "albums": [
 
-{
+    {
 
-"album_name":  "Belirdi Gece",
+    "album_name":  "Belirdi Gece",
 
-"release_date":  "2010-12-24"
+    "release_date":  "2010-12-24"
 
-},
+    },
 
-{
+    {
 
-"album_name":  "Narin Yalnızlık",
+    "album_name":  "Narin Yalnızlık",
 
-"release_date":  "2015-12-21"
+    "release_date":  "2015-12-21"
 
-},
+    },
 
-{
+    {
 
-"album_name":  "Disko Anksiyete",
+    "album_name":  "Disko Anksiyete",
 
-"release_date":  "2019-05-09"
+    "release_date":  "2019-05-09"
 
-}
+    }
 
 ]
 
@@ -147,11 +147,11 @@ DETACH DELETE n;
 
   
 
-```
-### Kafka (needs Zookeeper)
+
+### Kafka
 
   
-
+```
 #### List topics
 
 docker exec -it kafka kafka-topics --list --bootstrap-server localhost:9092
