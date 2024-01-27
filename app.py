@@ -75,37 +75,38 @@ def mongo_producer():
     
     producer.send(kafka_bands_topic, value=bands)
 
-    return jsonify({"message": "Bands published to Kafka successfully"})
+    return jsonify({"message": "Bands published to Kafka successfully", "data": bands})
 
 @app.route('/publish/users', methods=['POST'])
 def graph_producer():
     user_name = request.json['user_name']
 
     try:
-    # Neo4j query to retrieve user and friends by name
+    # Neo4j query to retrieve user and friends data by name
         query = f"""
-        MATCH (u:User)-[:FRIEND]->(friend)
+        MATCH (u:User)-[:FRIEND]->(friend:User)
         WHERE u.name = '{user_name}'
-        RETURN u, friend
+        RETURN u, COLLECT(DISTINCT friend) AS friends
         """
+
         result = graph.run(query)
 
-        # Collect users to publish
-        users_to_publish = []
         for record in result:
-            user = record['u']
-            friend = record['friend']
-            users_to_publish.append({
-                "user_name": user['name'],
-                "friend_name": friend['name']
-            })
+            user_data = record['u']
+            friends_data = record['friends']
 
-        producer.send(kafka_users_topic, value=users_to_publish)
+        users_data = [
+            {"name": user_data['name'], "favorite_bands": user_data['favorite_bands']}
+        ] + [
+            {"name": friend['name'], "favorite_bands": friend['favorite_bands']} for friend in friends_data
+        ]
 
-        return jsonify({"message": "Users published to Kafka successfully"})
+        producer.send(kafka_users_topic, value=users_data)
+
+        return jsonify({"message": "Users published to Kafka successfully", "data": users_data})
 
     except Exception as e:
         return jsonify({"error": f"Error processing request: {e}"})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5000, host='0.0.0.0')

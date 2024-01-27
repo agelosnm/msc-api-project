@@ -39,7 +39,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, REFERENCES ON `MusicN
 
 -- Create bands table
 CREATE TABLE bands (
-    BandID INT PRIMARY KEY,
+    BandID VARCHAR(255) PRIMARY KEY,
     BandName VARCHAR(255)
 );
 
@@ -47,14 +47,14 @@ CREATE TABLE bands (
 CREATE TABLE users (
     UserID INT PRIMARY KEY AUTO_INCREMENT,
     UserName VARCHAR(255),
-    BandID INT,
+    BandID VARCHAR(255),
     FOREIGN KEY (BandID) REFERENCES bands(BandID)
 );
 
 -- Create albums table
 CREATE TABLE albums (
     AlbumID INT PRIMARY KEY AUTO_INCREMENT,
-    BandID INT,
+    BandID VARCHAR(255),
     AlbumName VARCHAR(255),
     ReleaseDate DATE,
     FOREIGN KEY (BandID) REFERENCES bands(BandID)
@@ -74,7 +74,7 @@ JOIN albums ON bands.BandID = albums.BandID;
 #### Neo4j
 
   
-```
+```bash
 ##### Create nodes for users & friendship relationships
 
 
@@ -125,41 +125,41 @@ DETACH DELETE n;
 
 ```javascript
 
-{
-
-"band_name": "She Past Away",
-
-"formation_date": "2006",
-
-"albums": [
-
     {
 
-    "album_name":  "Belirdi Gece",
+        "band_name": "She Past Away",
 
-    "release_date":  "2010-12-24"
+        "formation_date": "2006",
 
-    },
+        "albums": [
 
-    {
+                {
 
-    "album_name":  "Narin Yalnızlık",
+                "album_name":  "Belirdi Gece",
 
-    "release_date":  "2015-12-21"
+                "release_date":  "2010-12-24"
 
-    },
+                },
 
-    {
+                {
 
-    "album_name":  "Disko Anksiyete",
+                "album_name":  "Narin Yalnızlık",
 
-    "release_date":  "2019-05-09"
+                "release_date":  "2015-12-21"
+
+                },
+
+                {
+
+                "album_name":  "Disko Anksiyete",
+
+                "release_date":  "2019-05-09"
+
+                }
+
+            ]
 
     }
-
-]
-
-}
 
 ```
 
@@ -168,8 +168,8 @@ DETACH DELETE n;
 
 #### Kafka
 
+```bash
   
-```
 ##### List topics
 
 docker exec -it kafka kafka-topics --list --bootstrap-server localhost:9092
@@ -183,7 +183,7 @@ docker exec -it kafka kafka-console-consumer --topic users-topic -bootstrap-serv
 
   
 
-##### Delete topicσ
+##### Delete topics
 
 docker exec -it kafka kafka-topics --delete --topic bands-topic --bootstrap-server localhost:9092
 docker exec -it kafka kafka-topics --delete --topic users-topic --bootstrap-server localhost:9092
