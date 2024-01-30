@@ -26,7 +26,24 @@ This Docker Compose configuration file (`docker-compose.yml`) sets up a developm
  
 
 ### Services
-  
+
+#### API
+```bash
+
+curl --location 'localhost:5000/publish/bands' \
+--header 'Content-Type: application/json' \
+--data '{
+    "start_date": "2000-01-01",
+    "end_date": "2023-01-01"
+}'
+
+curl --location 'localhost:5000/publish/users' \
+--header 'Content-Type: application/json' \
+--data '{
+    "user_name": "koukos"
+}'
+
+```
 
 #### MySQL
   

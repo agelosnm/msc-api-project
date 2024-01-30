@@ -73,15 +73,15 @@ try:
                     band_name = band_details["band_name"]
                     band_albums = band_details["albums"]
 
-                    # Insert bands
+                    # Execute MySQL query to insert a new record into the 'bands' table. If a duplicate key violation occurs (existing BandID), update the 'BandName' of the existing record with the new value.
                     mysql_cursor.execute("INSERT INTO bands (BandID, BandName) VALUES (%s, %s) ON DUPLICATE KEY UPDATE BandName=%s",
                                         (band_id, band_name, band_name))
 
-                    # Insert users
+                    # Execute MySQL query to insert a new record into the 'users' table, associating a user with a band. If a duplicate key violation occurs (existing UserName), update the 'UserName' of the existing record with the new value.
                     mysql_cursor.execute("INSERT INTO users (UserName, BandID) VALUES (%s, %s) ON DUPLICATE KEY UPDATE UserName=%s",
                                         (user, band_id, user))
 
-                    # Insert albums
+                    # Iterate through a list of band albums and execute MySQL queries to insert album information into the 'albums' table.
                     for album in band_albums:
                         mysql_cursor.execute("INSERT INTO albums (BandID, AlbumName, ReleaseDate) VALUES (%s, %s, %s)",
                                             (band_id, album["album_name"], album["release_date"]))
